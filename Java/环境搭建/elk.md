@@ -10,7 +10,7 @@ docker run -di -p 9200:9200 --name elasticsearch docker.elastic.co/elasticsearch
 
 docker run -di -p 5044:5044 --name logstash docker.elastic.co/logstash/logstash:6.6.2
 
-####修改conf/logstash.yml 将url修改为 ip:port
+####修改config/logstash.yml 将url修改为 ip:port
 
 ####修改pipeline/logstash.conf
 
@@ -18,7 +18,7 @@ docker run -di -p 5044:5044 --name logstash docker.elastic.co/logstash/logstash:
 - 在与springboot集成时 需要指定tcp方式的管道输入
  eg: input { tcp { port => 5044 codec => json_lines} }
 
--指定elasticsearch 来做logstash的管道输出 将日志发送到elasticsearch中 (index：指定一个索引,hosts：指定elasticsearch的主机端口)
+- 指定elasticsearch 来做logstash的管道输出 将日志发送到elasticsearch中 (index：指定一个索引,hosts：指定elasticsearch的主机端口)
 eg: output { elasticsearch { hosts => "192.168.50.154:9200" index => "applog"} stdout { } }
 
 此命令用来测试 logstash和elasticsearch 是否可以通讯
