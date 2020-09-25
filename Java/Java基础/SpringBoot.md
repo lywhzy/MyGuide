@@ -118,7 +118,7 @@ if (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME ||
 spring会在扫描的过程中扫描到的自动注入的信息（InjectionMetadata），在这时候起到了作用，spring根据bean的名称和class查找到
 此信息对象，然后根据此对象对bean进行属性填充
 
-````java
+````
 
 @Override
 	public PropertyValues postProcessPropertyValues(
@@ -148,5 +148,15 @@ spring会在扫描的过程中扫描到的自动注入的信息（InjectionMetad
 - 扫描代码，如果带有@Autowired注解，则将依赖注入信息封装到InjectionMetadata中（见扫描过程）；
 
 - 创建bean时（实例化对象和初始化），会调用各种BeanPostProcessor对bean初始化，AutowiredAnnotationBeanPostProcessor负责将相关的依赖注入进来；
+
+
+##SpringBoot yml文件一些用法
+
+![binaryTree](../image/微信图片_20200918134953.png)
+
+    @符号指从pom文件中读取属性
+
+    ${} 符号会从yml文件以及父yml文件中获取属性值，如果存在${key:value}这样的格式，指的是先从yml文件中获得key代表的属性值，如果没有获取到，则使用value
+
 
 

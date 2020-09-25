@@ -34,3 +34,7 @@ hystrix还有一种机制用来解决雪崩效应，断路器机制分为3个状
 - ribbon还有MaxAutoRetries对当前实例的重试次数,MaxAutoRetriesNextServer对切换实例的重试次数, 如果ribbon的ReadTimeout超时,或者ConnectTimeout连接超时,会进行重试操作
 - 由于ribbon的重试机制,通常熔断的超时时间需要配置的比ReadTimeout长,ReadTimeout比ConnectTimeout长,否则还未重试,就熔断了
 - 为了确保重试机制的正常运作,理论上（以实际情况为准）建议hystrix的超时时间为:(1 + MaxAutoRetries + MaxAutoRetriesNextServer) * ReadTimeout
+
+### Feign
+
+    通过@FeignClient注解上的url属性，可以指定远程调用的ip+port，而不从eureka中获得服务的ip+port
