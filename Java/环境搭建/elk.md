@@ -2,36 +2,41 @@
 
 ###安装 elasticsearch
 
-docker run -di -p 9200:9200 --name elasticsearch docker.elastic.co/elasticsearch/elasticsearch:6.6.2 
+docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" registry.cn-hangzhou.aliyuncs.com/namespace_lyw/elasticsearch:7.9.0
 
 ###安装 logstash
 
 ####运行容器
+    
+    首先创建容器，将logstash的配置文件目录拷贝出来后删除容器
+    docker run --name logstash -d -p 5044:5044 -p 9600:9600 registry.cn-hangzhou.aliyuncs.com/namespace_lyw/logstash:7.9.0
+    docker cp logstash:/usr/share/logstash/config ~/settings/config
+    
+    修改logstash.yml 将xpack.monitoring.elasticsearch.hosts修改为elasticsearch对应ip+port
+    修改pipeline.yml 将path.config修改成指定的logstash.conf路径
+    创建logstash.conf 编辑以下为控制台输入，elasticsearch输出的案例
+````   
+input {
+  stdin{}
+}
 
-docker run -di -p 5044:5044 --name logstash docker.elastic.co/logstash/logstash:6.6.2
-
-####修改config/logstash.yml 将url修改为 ip:port
-
-####修改pipeline/logstash.conf
-
-- 指定管道输入与输出
-- 在与springboot集成时 需要指定tcp方式的管道输入
- eg: input { tcp { port => 5044 codec => json_lines} }
-
-- 指定elasticsearch 来做logstash的管道输出 将日志发送到elasticsearch中 (index：指定一个索引,hosts：指定elasticsearch的主机端口)
-eg: output { elasticsearch { hosts => "192.168.50.154:9200" index => "applog"} stdout { } }
-
-此命令用来测试 logstash和elasticsearch 是否可以通讯
-
-docker run -it --rm docker.elastic.co/logstash/logstash:6.6.2 -e 'input { stdin { } tcp { port => 5044 codec => json_lines} } output { elasticsearch { hosts => "192.168.50.154:9200" index => "applog" } stdout { } }'
+output {
+  elasticsearch {
+    hosts => ["http://192.168.170.128:9200"]
+    index => "applog"
+    #user => "elastic"
+    #password => "changeme"
+  }
+}
+````   
+    
 
 
 ###安装kibana
-docker run --name kibana -e ELASTICSEARCH_URL=http://192.168.50.154:9200 -p 5601:5601 -d docker.elastic.co/kibana/kibana:6.6.2
+
+docker run --link YOUR_ELASTICSEARCH_CONTAINER_NAME_OR_ID:elasticsearch -p 5601:5601 registry.cn-hangzhou.aliyuncs.com/namespace_lyw/kibana:7.9.0
 
 
-###springboot集成 elk
-- 导logback的jar包
-- 编写logback.xml（注意 此配置文件比application.yml优先级更高 所以application.name需要写在此配置文件中）
+
 
 
